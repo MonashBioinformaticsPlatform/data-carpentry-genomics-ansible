@@ -19,6 +19,7 @@
 
 - name: Enable OpenSSH server ChallengeResponseAuthentication
   tags: sshd
+  become: yes
   lineinfile:
     path: /etc/ssh/sshd_config
     regexp: '^ChallengeResponseAuthentication'
