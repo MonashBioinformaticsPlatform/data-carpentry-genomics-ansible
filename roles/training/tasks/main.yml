@@ -1,0 +1,7 @@
+---
+- include_tasks: sshd.yml
+  tags: ['sshd']
+- include_tasks: packages.yml
+  tags: ['packages']
+- include_tasks: dcuser.yml
+  tags: ['dcuser']

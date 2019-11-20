@@ -1,0 +1,6 @@
+---
+- name: Setup Data Carpentry Genomics training instances
+  hosts: dc-training
+  remote_user: ubuntu
+  roles:
+    - training

@@ -1,0 +1,15 @@
+---
+- name: Install some packages
+  become: yes
+  apt:
+    update_cache: yes
+    autoclean: yes
+    pkg:
+      - unzip
+      - htop
+      - vim
+      - nano
+      - bash
+      - tmux
+      - screen
+      - byobu

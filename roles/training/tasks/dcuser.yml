@@ -1,0 +1,87 @@
+---
+- name: Add the default dcuser
+  become: yes
+  user:
+    name: dcuser
+    password: "{{ dcuser_password | password_hash('sha512') }}"
+    shell: /bin/bash
+    update_password: always
+    comment: Data Carpentry User
+
+- name: Install Miniconda for dcuser
+  become: yes
+  args:
+    executable: /bin/bash
+    chdir: /home/dcuser
+    creates: /home/dcuser/.miniconda3/envs/dc-genomics/bin/samtools
+  shell: |
+    MINICONDA_PATH=/home/dcuser/.miniconda3
+    rm -rf "${MINICONDA_PATH}"
+
+    rm -f Miniconda3-latest-Linux-x86_64.sh
+    wget -c https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    bash Miniconda3-latest-Linux-x86_64.sh -b -p ${MINICONDA_PATH}
+    source ${MINICONDA_PATH}/bin/activate
+    sudo -u dcuser -H ${MINICONDA_PATH}/bin/conda init bash
+
+    ${MINICONDA_PATH}/bin/conda install --yes \
+                -c default \
+                -c conda-forge \
+                -c bioconda \
+                fastqc=0.11.7=5 \
+                trimmomatic=0.38=0 \
+                bwa=0.7.17=ha92aebf_3 \
+                samtools=1.9=h8ee4bcc_1 \
+                bcftools=1.8=h4da6232_3 \
+                igv
+
+    chown -R dcuser:dcuser /home/dcuser
+
+# Seems like Figshare zip isn't always byte-for-byte identical ?
+# We need to trust the versioned URL I suppose.
+# echo "0deae514b778c5f537baa15bfa5d6eea  dcdata.zip" >dcdata.zip.md5
+# md5sum -c dcdata.zip.md5
+
+- name: Install get data from Figshare
+  become: yes
+  args:
+    executable: /bin/bash
+    chdir: /home/dcuser
+  shell: |
+    set -e
+    wget -c -O dcdata.zip https://ndownloader.figshare.com/articles/7726454/versions/2
+
+    unzip -o dcdata.zip && rm -f dcdata.zip
+
+    for f in *.tar.gz; do
+      tar xvzf "${f}";
+    done
+
+    for f in *.zip; do
+      unzip -o "${f}";
+    done
+
+    chown -R dcuser:dcuser /home/dcuser
+
+
+- name: Cleanup downloaded files
+  become: yes
+  args:
+    executable: /bin/bash
+    chdir: /home/dcuser
+  shell: |
+
+    rm -rf .shell-solutions
+    rm -rf .wrangling-solutions
+    mv shell-solutions .shell-solutions
+    mv wrangling-solutions .wrangling-solutions
+
+    mkdir -p .downloads
+    mv *.tar.gz .downloads/
+    mv *.zip .downloads/
+    rm -f dcdata.zip.md5
+    rm -f Miniconda*.sh
+
+    rm -f /home/dcuser/.bash_history
+
+    chown -R dcuser:dcuser /home/dcuser

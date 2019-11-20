@@ -1,0 +1,28 @@
+---
+
+- name: Ensure /etc/ssh/sshd_config exists
+  tags: sshd
+  become: yes
+  stat: path=/etc/ssh/sshd_config
+  register: sshd_config
+
+- name: Enable OpenSSH server PasswordAuthentication
+  tags: sshd
+  become: yes
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication'
+    line: 'PasswordAuthentication yes'
+    state: present
+  notify: Restart sshd
+  when: sshd_config.stat.exists
+
+- name: Enable OpenSSH server ChallengeResponseAuthentication
+  tags: sshd
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^ChallengeResponseAuthentication'
+    line: 'ChallengeResponseAuthentication yes'
+    state: present
+  notify: Restart sshd
+  when: sshd_config.stat.exists
