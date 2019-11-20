@@ -13,3 +13,7 @@
       - tmux
       - screen
       - byobu
+      # https://github.com/FelixKrueger/TrimGalore/issues/58
+      # These appear required to prevent a crash in FastQC using Java 11 ...
+      - fontconfig
+      - fonts-dejavu-core
