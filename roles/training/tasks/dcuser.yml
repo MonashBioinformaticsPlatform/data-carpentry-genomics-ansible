@@ -53,6 +53,8 @@
 
     unzip -o dcdata.zip && rm -f dcdata.zip
 
+    rm -f sub.tar.gz
+    
     for f in *.tar.gz; do
       tar xvzf "${f}";
     done
