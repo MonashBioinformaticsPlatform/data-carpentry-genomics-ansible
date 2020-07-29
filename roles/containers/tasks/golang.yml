@@ -1,0 +1,5 @@
+- name: create a folder for go
+  tags: ['golang']
+  file:
+    path: "{{ golang_install_dir }}"
+    recurse: yes

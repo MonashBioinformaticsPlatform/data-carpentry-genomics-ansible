@@ -1,28 +1,30 @@
 ---
 - name: Add the default dcuser
+  tags: dcuser
   become: yes
   user:
-    name: dcuser
+    name: "{{ dcuser_username }}"
     password: "{{ dcuser_password | password_hash('sha512') }}"
     shell: /bin/bash
     update_password: always
     comment: Data Carpentry User
 
 - name: Install Miniconda for dcuser
+  tags: dcuser
   become: yes
   args:
     executable: /bin/bash
-    chdir: /home/dcuser
-    creates: /home/dcuser/.miniconda3/envs/dc-genomics/bin/samtools
+    chdir: "/home/{{ dcuser_username }}"
+    creates: "/home/{{ dcuser_username }}/.miniconda3/envs/dc-genomics/bin/samtools"
   shell: |
-    MINICONDA_PATH=/home/dcuser/.miniconda3
+    MINICONDA_PATH=/home/{{ dcuser_username }}/.miniconda3
     rm -rf "${MINICONDA_PATH}"
 
     rm -f Miniconda3-latest-Linux-x86_64.sh
     wget -c https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
     bash Miniconda3-latest-Linux-x86_64.sh -b -p ${MINICONDA_PATH}
     source ${MINICONDA_PATH}/bin/activate
-    sudo -u dcuser -H ${MINICONDA_PATH}/bin/conda init bash
+    sudo -u {{ dcuser_username }} -H ${MINICONDA_PATH}/bin/conda init bash
 
     ${MINICONDA_PATH}/bin/conda install --yes \
                 -c default \
@@ -35,7 +37,7 @@
                 bcftools=1.8=h4da6232_3 \
                 igv
 
-    chown -R dcuser:dcuser /home/dcuser
+    chown -R {{ dcuser_username }}:{{ dcuser_username }} /home/{{ dcuser_username }}
 
 # Seems like Figshare zip isn't always byte-for-byte identical ?
 # We need to trust the versioned URL I suppose.
@@ -43,10 +45,11 @@
 # md5sum -c dcdata.zip.md5
 
 - name: Install get data from Figshare
+  tags: dcuser
   become: yes
   args:
     executable: /bin/bash
-    chdir: /home/dcuser
+    chdir: "/home/{{ dcuser_username }}"
   shell: |
     set -e
     wget -c -O dcdata.zip https://ndownloader.figshare.com/articles/7726454/versions/2
@@ -63,14 +66,15 @@
       unzip -o "${f}";
     done
 
-    chown -R dcuser:dcuser /home/dcuser
+    chown -R {{ dcuser_username }}:{{ dcuser_username }} /home/{{ dcuser_username }}
 
 
 - name: Cleanup downloaded files
+  tags: dcuser
   become: yes
   args:
     executable: /bin/bash
-    chdir: /home/dcuser
+    chdir: /home/{{ dcuser_username }}
   shell: |
 
     rm -rf .shell-solutions
@@ -84,6 +88,6 @@
     rm -f dcdata.zip.md5
     rm -f Miniconda*.sh
 
-    rm -f /home/dcuser/.bash_history
+    rm -f /home/{{ dcuser_username }}/.bash_history
 
-    chown -R dcuser:dcuser /home/dcuser
+    chown -R {{ dcuser_username }}:{{ dcuser_username }} /home/{{ dcuser_username }}

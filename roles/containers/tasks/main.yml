@@ -1,0 +1,11 @@
+- import_tasks: sudo.yml
+  tags: ['sudo']
+
+- import_tasks: packages.yml
+  tags: ['packages', 'apt']
+
+- include_tasks: golang.yml
+  tags: ['golang']
+
+- import_tasks: pawsey_repos.yml
+  tags: ['repos']

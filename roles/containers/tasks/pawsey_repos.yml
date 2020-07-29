@@ -1,0 +1,11 @@
+---
+
+- name: Get the Pawsey container workshop repos
+  shell: |
+    git clone https://github.com/PawseySC/singularity-containers.git
+    git clone https://github.com/PawseySC/containers-bioinformatics-workshop.git
+    chown -R "{{ dcuser_username }}"."{{ dcuser_username }}" \
+      singularity-containers \
+      containers-bioinformatics-workshop
+  args:
+    chdir: "/home/{{ dcuser_username }}"

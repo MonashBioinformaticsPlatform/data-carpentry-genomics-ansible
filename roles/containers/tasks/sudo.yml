@@ -1,0 +1,10 @@
+- name: Adding the default user "{{ dcuser_username }}" to docker and sudo groups
+  become: yes
+  user:
+    name: "{{ dcuser_username }}"
+    password: "{{ dcuser_password | password_hash('sha512') }}"
+    append: yes
+    state: present
+    groups: ['sudo', 'docker']
+    shell: /bin/bash
+    update_password: always

@@ -1,0 +1,5 @@
+- src: lecorguille.singularity
+
+- src: https://github.com/angstwad/docker.ubuntu
+  name: angstwad.docker_ubuntu
+  version: v3.9.0

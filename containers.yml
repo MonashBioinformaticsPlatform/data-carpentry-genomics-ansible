@@ -1,0 +1,20 @@
+- name: Containers workshop dependencies and config
+  hosts: container-training
+  remote_user: ubuntu
+  become: yes
+  vars:
+    dcuser_password: data4Carp
+    singularity_version: "3.6.1"
+    # Workaround for: https://github.com/abims-sbr/ansible-singularity/issues/7
+    golang_version: "1.14.4"
+    golang_gopath: "/home/ubuntu/go/{{ golang_version }}"
+  environment:
+    # Workaround for: https://github.com/abims-sbr/ansible-singularity/issues/7
+    GOROOT: "/opt/go/{{ golang_version }}"
+    GOPATH: "/home/ubuntu/go/{{ golang_version }}"
+    PATH: "{{ ansible_env.PATH }}:/opt/go/{{ golang_version }}/bin"
+  roles:
+    - { role: angstwad.docker_ubuntu }
+    - containers
+    - { role: lecorguille.singularity }
+

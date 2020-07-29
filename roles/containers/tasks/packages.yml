@@ -1,0 +1,7 @@
+- name: apt update
+  become: yes
+  apt:
+    cache_valid_time: 3600
+    update_cache: yes
+    pkg:
+      - sl

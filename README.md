@@ -22,6 +22,18 @@ ansible-playbook -i hosts training-instance.yml
 Typically you'd run this on a single instance, snapshot it to create an image and then launch many instances for workshop participants based on that image.
 
 
+### Bonus
+The instances can also be setup for the ["Singularity Containers for Bioinformatics"](https://pawseysc.github.io/containers-bioinformatics-workshop/) and ["Containers on HPC and Cloud with Singularity"](https://pawseysc.github.io/singularity-containers/index.html) tutorials written by Marco De La Pierre at the Pawsey Super Computing Centre.
+
+```bash
+ansible-galaxy install --force -r requirements.yml -p galaxy-roles/
+ansible-playbook -i hosts containers.yml
+```
+
+In this case, users are given `sudo` access in order to allow them to run `docker build` etc.
+
+(a NeCTAR image exists for this too, named `containers-workshop-20200720`).
+
 ## Openstack / NeCTAR example
 
 If you would like to launch a set of instance on Openstack / NeCTAR using the shell you'll need the `openstack` 
