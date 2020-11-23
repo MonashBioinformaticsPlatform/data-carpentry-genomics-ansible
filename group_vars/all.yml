@@ -1,2 +1,7 @@
+# This username and password pair reflect the values used in the public setup documentation
+# at https://datacarpentry.org/genomics-workshop/AMI-setup/
+
+# You should change these for your own workshop and communicate these new username/password 
+# to participants, especially if your instances will be SSH-accessible via the public internet
 dcuser_username: dcuser
 dcuser_password: data4Carp
