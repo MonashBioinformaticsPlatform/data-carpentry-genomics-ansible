@@ -14,10 +14,11 @@
   become: yes
   args:
     executable: /bin/bash
-    chdir: "/home/{{ dcuser_username }}"
-    creates: "/home/{{ dcuser_username }}/.miniconda3/envs/dc-genomics/bin/samtools"
+
+    chdir: "{{ home_base }}/{{ dcuser_username }}"
+    creates: "{{ home_base }}/{{ dcuser_username }}/.miniconda3/envs/bin/samtools"
   shell: |
-    MINICONDA_PATH=/home/{{ dcuser_username }}/.miniconda3
+    MINICONDA_PATH={{ home_base }}/{{ dcuser_username }}/.miniconda3
     rm -rf "${MINICONDA_PATH}"
 
     rm -f Miniconda3-latest-Linux-x86_64.sh
@@ -26,18 +27,23 @@
     source ${MINICONDA_PATH}/bin/activate
     sudo -u {{ dcuser_username }} -H ${MINICONDA_PATH}/bin/conda init bash
 
-    ${MINICONDA_PATH}/bin/conda install --yes \
+    # ${MINICONDA_PATH}/bin/conda install --yes -c conda-forge mamba
+    # CONDA_BIN=${MINICONDA_PATH}/bin/mamba
+    
+    CONDA_BIN=${MINICONDA_PATH}/bin/conda
+
+    ${CONDA_BIN} install --yes \
                 -c default \
                 -c conda-forge \
                 -c bioconda \
                 fastqc=0.11.7=5 \
-                trimmomatic=0.38=0 \
+                trimmomatic=0.38 \
                 bwa=0.7.17=ha92aebf_3 \
                 samtools=1.9=h8ee4bcc_1 \
                 bcftools=1.8=h4da6232_3 \
                 igv
 
-    chown -R {{ dcuser_username }}:{{ dcuser_username }} /home/{{ dcuser_username }}
+    chown -R {{ dcuser_username }}:{{ dcuser_username }} {{ home_base }}/{{ dcuser_username }}
 
 # Seems like Figshare zip isn't always byte-for-byte identical ?
 # We need to trust the versioned URL I suppose.
@@ -49,7 +55,7 @@
   become: yes
   args:
     executable: /bin/bash
-    chdir: "/home/{{ dcuser_username }}"
+    chdir: "{{ home_base }}/{{ dcuser_username }}"
   shell: |
     set -e
     wget -c -O dcdata.zip https://ndownloader.figshare.com/articles/7726454/versions/2
@@ -66,7 +72,7 @@
       unzip -o "${f}";
     done
 
-    chown -R {{ dcuser_username }}:{{ dcuser_username }} /home/{{ dcuser_username }}
+    chown -R {{ dcuser_username }}:{{ dcuser_username }} {{ home_base }}/{{ dcuser_username }}
 
 
 - name: Cleanup downloaded files
@@ -74,7 +80,7 @@
   become: yes
   args:
     executable: /bin/bash
-    chdir: /home/{{ dcuser_username }}
+    chdir: "{{ home_base }}/{{ dcuser_username }}"
   shell: |
 
     rm -rf .shell-solutions
@@ -88,6 +94,6 @@
     rm -f dcdata.zip.md5
     rm -f Miniconda*.sh
 
-    rm -f /home/{{ dcuser_username }}/.bash_history
+    rm -f {{ home_base }}/{{ dcuser_username }}/.bash_history
 
-    chown -R {{ dcuser_username }}:{{ dcuser_username }} /home/{{ dcuser_username }}
+    chown -R {{ dcuser_username }}:{{ dcuser_username }} {{ home_base }}/{{ dcuser_username }}

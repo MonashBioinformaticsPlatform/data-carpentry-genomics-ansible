@@ -5,3 +5,6 @@
 # to participants, especially if your instances will be SSH-accessible via the public internet
 dcuser_username: dcuser
 dcuser_password: data4Carp
+
+# Change this variable if your user home directories are at an alternative path
+home_base: /home
