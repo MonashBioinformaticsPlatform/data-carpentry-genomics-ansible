@@ -68,6 +68,23 @@ server_id_list=$(openstack server list --format csv | tail -n +2 | grep dc-genom
 openstack server delete ${server_id_list}
 ```
 
+### Changing passwords using Ansible
+If you have access to the instances as the `sudo` user `ubuntu`, you can change the `dcuser` password _en masse_ using Ansible like:
+
+```
+# Create a file with one host IP per line
+openstack server list --format csv | tail -n +2 | \
+  grep dc-genomics-training | cut -f 4 -d ',' |   sed 's/\"//g' | cut -f 2 -d '=' | grep . \
+  | cut -d "'" -f 4 | sort -h \
+  >hosts
+
+# Ensure you have the passlib library installed locally
+pip install passlib
+
+# Use Ansible to change the password on all hosts
+ansible all -i hosts -m user -a "name=dcuser update_password=always password={{ 'thenewpassword' | password_hash('sha512') }}" -u ubuntu --become
+```
+
 ## TODO
 
 * Add RStudio Server
