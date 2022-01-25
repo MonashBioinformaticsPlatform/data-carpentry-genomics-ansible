@@ -1,0 +1,12 @@
+---
+- name: Add user - {{ username }}
+  tags: ['users']
+  become: yes
+  user:
+    name: "{{ username }}"
+    password: "{{ dcuser_password | password_hash('sha512') }}"
+    shell: /bin/bash
+    update_password: always
+    expires: "{{ user_expiry }}"
+    comment: Temporary User
+  loop: "{{ usernames }}"

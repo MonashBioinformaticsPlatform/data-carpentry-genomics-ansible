@@ -8,3 +8,7 @@ dcuser_password: data4Carp
 
 # Change this variable if your user home directories are at an alternative path
 home_base: /home
+
+# seconds from epoch for training-users expiry (not dcuser)
+# -1 is no expiry
+user_expiry: -1
